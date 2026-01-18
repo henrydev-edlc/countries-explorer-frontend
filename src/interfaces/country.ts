@@ -7,8 +7,12 @@ export interface Country {
   capital: string[];
   region: string;
   population: number;
+  area: number;
   flags: {
     svg: string;
     png: string;
   };
+  currencies?: Record<string, {name: string, symbol: string}>; // moneda
+  languages?: Record<string, string>;
+  borders?: string[]; // paises vecinos
 }

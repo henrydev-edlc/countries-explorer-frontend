@@ -1,11 +1,11 @@
-import axios from 'axios';
+import axios from 'axios'; // cliente HTTP, para hacer la peticion al API
 
 const countryApi = axios.create({
   baseURL: 'https://restcountries.com/v3.1'
 });
 
 export const getAllCountries = async () => {
-  // Añadimos ?fields para que la API responda correctamente y sea más rápida
-  const response = await countryApi.get('/all?fields=name,capital,flags,population,cca3,region');
+  // Hemos agregado: area, currencies, languages y borders
+  const response = await countryApi.get('/all?fields=name,capital,flags,population,cca3,region,area,currencies,languages,borders');
   return response.data;
 };
