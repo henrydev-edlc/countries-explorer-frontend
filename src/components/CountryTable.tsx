@@ -91,7 +91,7 @@ export const CountryTable = () => {
                   <Divider sx={{ mb: 1 }} />
                   
                   <Typography variant="body2"><strong>Capital:</strong> {country.capital?.[0] || 'N/A'}</Typography>
-                  <Typography variant="body2"><strong>Población:</strong> {country.poblacion.toLocaleString()}</Typography>
+                  <Typography variant="body2"><strong>Población:</strong> {country.population.toLocaleString()}</Typography>
                   <Typography variant="body2"><strong>Área:</strong> {country.area.toLocaleString()} km²</Typography>
                   <Typography variant="body2"><strong>Región:</strong> {country.region}</Typography>
                   <Typography variant="body2"><strong>Moneda:</strong> {currencies}</Typography>
