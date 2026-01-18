@@ -4,8 +4,9 @@ const countryApi = axios.create({
   baseURL: 'https://restcountries.com/v3.1'
 });
 
+// Obtener todos los paises
 export const getAllCountries = async () => {
-  // Hemos agregado: area, currencies, languages y borders
+  // Con los siguientes datos
   const response = await countryApi.get('/all?fields=name,capital,flags,population,cca3,region,area,currencies,languages,borders');
   return response.data;
 };
