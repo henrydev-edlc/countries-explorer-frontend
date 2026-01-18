@@ -1,38 +1,123 @@
-import { useEffect, useState } from 'react';
-import { Grid, Card, CardContent, Typography, CardMedia } from '@mui/material';
+import { useEffect, useState, useMemo } from 'react';
+import Grid from '@mui/material/Grid';
+import { 
+  Card, CardContent, Typography, CardMedia, Box, Chip, 
+  TextField, MenuItem, Select, FormControl, InputLabel, 
+  Pagination, Button, ButtonGroup, Stack, Divider 
+} from '@mui/material';
 import { getAllCountries } from '../api/countryApi';
 import type { Country } from '../interfaces/country';
 
 export const CountryTable = () => {
   const [countries, setCountries] = useState<Country[]>([]);
+  const [search, setSearch] = useState('');
+  const [region, setRegion] = useState('');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 5; // Paginación de 5
 
   useEffect(() => {
-    getAllCountries().then(data => setCountries(data));
+    getAllCountries().then(setCountries);
   }, []);
 
+  // Lógica de Filtrado (Nombre y Región)
+  const filteredCountries = useMemo(() => {
+    return countries.filter(c => {
+      const matchesName = c.name.common.toLowerCase().includes(search.toLowerCase());
+      const matchesRegion = region === '' || c.region === region;
+      return matchesName && matchesRegion;
+    });
+  }, [countries, search, region]);
+
+  // Lógica de Paginación
+  const count = Math.ceil(filteredCountries.length / itemsPerPage);
+  const pagedCountries = filteredCountries.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+
   return (
-    <Grid container spacing={2} sx={{ p: 2 }}>
-      {countries.map((country) => (
-        <Grid item xs={12} sm={6} md={4} lg={3} key={country.cca3}>
-          <Card>
-            <CardMedia
-              component="img"
-              height="140"
-              image={country.flags.svg}
-              alt={country.name.common}
-            />
-            <CardContent>
-              <Typography variant="h6">{country.name.common}</Typography>
-              <Typography variant="body2" color="text.secondary">
-                Capital: {country.capital ? country.capital[0] : 'N/A'}
-              </Typography>
-              <Typography variant="body2">
-                Población: {country.population.toLocaleString()}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      ))}
-    </Grid>
+    <Box sx={{ flexGrow: 1, p: 2 }}>
+      {/* CONTROLES: Búsqueda, Filtro y Vista */}
+      <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mb: 4 }}>
+        <TextField 
+          label="Buscar por nombre..." 
+          variant="outlined" 
+          fullWidth 
+          onChange={(e) => {setSearch(e.target.value); setPage(1);}}
+        />
+        
+        <FormControl fullWidth>
+          <InputLabel>Región</InputLabel>
+          <Select value={region} label="Región" onChange={(e) => {setRegion(e.target.value); setPage(1);}}>
+            <MenuItem value="">Todas las Regiones</MenuItem>
+            <MenuItem value="Africa">Africa</MenuItem>
+            <MenuItem value="Americas">Americas</MenuItem>
+            <MenuItem value="Asia">Asia</MenuItem>
+            <MenuItem value="Europe">Europe</MenuItem>
+            <MenuItem value="Oceania">Oceania</MenuItem>
+          </Select>
+        </FormControl>
+
+        <ButtonGroup sx={{ height: '56px' }}>
+          <Button variant={viewMode === 'grid' ? 'contained' : 'outlined'} onClick={() => setViewMode('grid')}>Grid</Button>
+          <Button variant={viewMode === 'list' ? 'contained' : 'outlined'} onClick={() => setViewMode('list')}>Lista</Button>
+        </ButtonGroup>
+      </Stack>
+
+      {/* LISTADO DE PAÍSES */}
+      <Grid container spacing={3}>
+        {pagedCountries.map((country) => {
+          // Procesamiento de datos complejos
+          const currencies = country.currencies 
+            ? Object.values(country.currencies).map(c => c.name).join(', ') 
+            : 'N/A';
+          const languages = country.languages 
+            ? Object.values(country.languages).join(', ') 
+            : 'N/A';
+
+          return (
+            <Grid item xs={12} sm={viewMode === 'grid' ? 6 : 12} md={viewMode === 'grid' ? 4 : 12} key={country.cca3}>
+              <Card sx={{ display: viewMode === 'list' ? 'flex' : 'block', height: '100%' }}>
+                <CardMedia
+                  component="img"
+                  sx={{ 
+                    width: viewMode === 'list' ? { xs: '100%', sm: 300 } : '100%', 
+                    height: 200,
+                    objectFit: 'cover'
+                  }}
+                  image={country.flags.svg}
+                  alt={country.name.common}
+                />
+                <CardContent sx={{ flex: 1 }}>
+                  <Typography variant="h5" gutterBottom>{country.name.common}</Typography>
+                  <Divider sx={{ mb: 1 }} />
+                  
+                  <Typography variant="body2"><strong>Capital:</strong> {country.capital?.[0] || 'N/A'}</Typography>
+                  <Typography variant="body2"><strong>Población:</strong> {country.poblacion.toLocaleString()}</Typography>
+                  <Typography variant="body2"><strong>Área:</strong> {country.area.toLocaleString()} km²</Typography>
+                  <Typography variant="body2"><strong>Región:</strong> {country.region}</Typography>
+                  <Typography variant="body2"><strong>Moneda:</strong> {currencies}</Typography>
+                  <Typography variant="body2" noWrap title={languages}><strong>Lenguajes:</strong> {languages}</Typography>
+
+                  <Box sx={{ mt: 2 }}>
+                    <Typography variant="caption" sx={{ fontWeight: 'bold', display: 'block' }}>Vecinos:</Typography>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 0.5 }}>
+                      {country.borders?.length ? (
+                        country.borders.map(b => <Chip key={b} label={b} size="small" variant="outlined" color="primary" />)
+                      ) : (
+                        <Typography variant="caption" color="text.secondary">Sin fronteras</Typography>
+                      )}
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          );
+        })}
+      </Grid>
+
+      {/* PAGINACIÓN */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, mb: 2 }}>
+        <Pagination count={count} page={page} onChange={(_, v) => setPage(v)} color="primary" size="large" />
+      </Box>
+    </Box>
   );
 };
