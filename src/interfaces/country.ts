@@ -1,3 +1,4 @@
+/* === Interfaz que define la estructura de datos de un pais === */
 export interface Country {
   name: {
     common: string;

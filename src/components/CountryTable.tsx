@@ -9,12 +9,12 @@ import { getAllCountries } from '../api/countryApi';
 import type { Country } from '../interfaces/country';
 
 export const CountryTable = () => {
-  const [countries, setCountries] = useState<Country[]>([]);
-  const [search, setSearch] = useState('');
-  const [region, setRegion] = useState('');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [page, setPage] = useState(1);
-  const itemsPerPage = 5; // Paginación de 5
+  const [countries, setCountries] = useState<Country[]>([]); // Datos de API
+  const [search, setSearch] = useState(''); // Buscador
+  const [region, setRegion] = useState(''); // Filtro por continente o region
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid'); //Cambio de diseño
+  const [page, setPage] = useState(1); // Pagina actual
+  const itemsPerPage = 5; // Limite de paginacion 5
 
   useEffect(() => {
     getAllCountries().then(setCountries);
@@ -44,18 +44,20 @@ export const CountryTable = () => {
           onChange={(e) => {setSearch(e.target.value); setPage(1);}}
         />
         
+        // Select para seleccionar una region
         <FormControl fullWidth>
           <InputLabel>Región</InputLabel>
           <Select value={region} label="Región" onChange={(e) => {setRegion(e.target.value); setPage(1);}}>
             <MenuItem value="">Todas las Regiones</MenuItem>
             <MenuItem value="Africa">Africa</MenuItem>
-            <MenuItem value="Americas">Americas</MenuItem>
+            <MenuItem value="Americas">América</MenuItem>
             <MenuItem value="Asia">Asia</MenuItem>
-            <MenuItem value="Europe">Europe</MenuItem>
+            <MenuItem value="Europe">Europa</MenuItem>
             <MenuItem value="Oceania">Oceania</MenuItem>
           </Select>
         </FormControl>
 
+        // Fragmaneto para mostrar los paises en forma de Grid o Lista
         <ButtonGroup sx={{ height: '56px' }}>
           <Button variant={viewMode === 'grid' ? 'contained' : 'outlined'} onClick={() => setViewMode('grid')}>Grid</Button>
           <Button variant={viewMode === 'list' ? 'contained' : 'outlined'} onClick={() => setViewMode('list')}>Lista</Button>
@@ -65,7 +67,7 @@ export const CountryTable = () => {
       {/* LISTADO DE PAÍSES */}
       <Grid container spacing={3}>
         {pagedCountries.map((country) => {
-          // Procesamiento de datos complejos
+          // Procesamiento de datos 
           const currencies = country.currencies 
             ? Object.values(country.currencies).map(c => c.name).join(', ') 
             : 'N/A';
@@ -74,6 +76,7 @@ export const CountryTable = () => {
             : 'N/A';
 
           return (
+            // rotornar los paises en grid ya con sus datos 
             <Grid item xs={12} sm={viewMode === 'grid' ? 6 : 12} md={viewMode === 'grid' ? 4 : 12} key={country.cca3}>
               <Card sx={{ display: viewMode === 'list' ? 'flex' : 'block', height: '100%' }}>
                 <CardMedia
@@ -114,7 +117,7 @@ export const CountryTable = () => {
         })}
       </Grid>
 
-      {/* PAGINACIÓN */}
+      {/* PAGINACION*/}
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, mb: 2 }}>
         <Pagination count={count} page={page} onChange={(_, v) => setPage(v)} color="primary" size="large" />
       </Box>
