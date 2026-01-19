@@ -21,8 +21,11 @@ import {
 import { getAllCountries } from "../api/countryApi";
 import type { Country } from "../interfaces/country";
 import { Link } from "react-router-dom";
+import { useTheme } from "@mui/material/styles";
 
 export const CountryTable = () => {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
   const [countries, setCountries] = useState<Country[]>([]); // Datos de API
   const [search, setSearch] = useState(""); // Buscador
   const [region, setRegion] = useState(""); // Filtro por continente o region
@@ -172,7 +175,36 @@ export const CountryTable = () => {
           </Select>
         </FormControl>
 
-        <ButtonGroup sx={{ height: "56px" }}>
+        <ButtonGroup
+          sx={{
+            height: "56px",
+            "& .MuiButton-root": {
+              // Color del borde y texto según el modo
+              borderColor: isDarkMode
+                ? "rgba(255,255,255,0.3)"
+                : "rgba(0,0,0,0.2)",
+              color: isDarkMode ? "#fff" : "#000",
+
+              "&.MuiButton-contained": {
+                // Botón seleccionado: siempre negro
+                bgcolor: "#000000",
+                color: "#ffffff",
+                "&:hover": {
+                  bgcolor: "#333333",
+                },
+              },
+              "&.MuiButton-outlined": {
+                // Color del boton no seleccionado: gris muy suave o transparente
+                bgcolor: "transparent",
+                "&:hover": {
+                  bgcolor: isDarkMode
+                    ? "rgba(255,255,255,0.05)"
+                    : "rgba(0,0,0,0.05)",
+                },
+              },
+            },
+          }}
+        >
           <Button
             variant={viewMode === "grid" ? "contained" : "outlined"}
             onClick={() => setViewMode("grid")}
@@ -247,7 +279,6 @@ export const CountryTable = () => {
           </Box>
         </Box>
       )}
-
 
       {/* LISTADO DE PAÍSES */}
       <Grid container spacing={3}>
@@ -355,7 +386,7 @@ export const CountryTable = () => {
                             variant="outlined"
                             color="primary"
                             component={Link} // Hace que el Chip use la lógica de Link
-                            to={`/country/${b}`} // Define la ruta dinámica del país vecino
+                            to={`/country/${b}`} // Define la ruta dinamica del país vecino
                             clickable // Habilita el efecto visual de clic
                             sx={{ cursor: "pointer" }} // Cambia el cursor a la "manita"
                           />
