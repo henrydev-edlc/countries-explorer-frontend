@@ -26,6 +26,8 @@ export const CountryTable = () => {
   const [countries, setCountries] = useState<Country[]>([]); // Datos de API
   const [search, setSearch] = useState(""); // Buscador
   const [region, setRegion] = useState(""); // Filtro por continente o region
+  const [language, setLanguage] = useState("");
+  const [compareList, setcompareList] = useState<Country[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid"); //Cambio de diseño
   const [page, setPage] = useState(1); // Pagina actual
   const itemsPerPage = 5; // Limite de paginacion 5
@@ -41,9 +43,75 @@ export const CountryTable = () => {
         .toLowerCase()
         .includes(search.toLowerCase());
       const matchesRegion = region === "" || c.region === region;
-      return matchesName && matchesRegion;
+
+      const matchesLanguage =
+        language === "" ||
+        (c.languages && Object.values(c.languages).includes(language));
+
+      return matchesName && matchesRegion && matchesLanguage;
     });
-  }, [countries, search, region]);
+  }, [countries, search, region, language]);
+
+  // Extraer todos los lenguajes únicos de los países cargados
+  const availableLanguages = useMemo(() => {
+    const allLangs = countries.flatMap((c) =>
+      c.languages ? Object.values(c.languages) : [],
+    );
+    return [...new Set(allLangs)].sort(); // Quita duplicados y ordena alfabéticamente
+  }, [countries]);
+
+  // Funcion para añadir/quitar de la comparación
+  const handleCompare = (country: Country) => {
+    if (compareList.find((c) => c.cca3 === country.cca3)) {
+      setcompareList(compareList.filter((c) => c.cca3 !== country.cca3));
+    } else if (compareList.length < 2) {
+      setcompareList([...compareList, country]);
+    } else {
+      alert(
+        "Solo puedes comparar 2 paises a la vez. Quita uno para agregar otro.",
+      );
+    }
+  };
+
+  {
+    /* SECCIÓN DE COMPARACIÓN (Solo aparece si hay 2 seleccionados) */
+  }
+  {
+    compareList.length === 2 && (
+      <Box sx={{ mb: 4, p: 3, bgcolor: "action.hover", borderRadius: 2 }}>
+        <Typography variant="h4" textAlign="center" gutterBottom>
+          Comparación
+        </Typography>
+        <Grid container spacing={4}>
+          {compareList.map((c) => (
+            <Grid item xs={6} key={c.cca3}>
+              <Typography variant="h6" color="primary">
+                {c.name.common}
+              </Typography>
+              <Typography>
+                <strong>Población:</strong> {c.population.toLocaleString()}
+              </Typography>
+              <Typography>
+                <strong>Área:</strong> {c.area.toLocaleString()} km²
+              </Typography>
+              <Typography>
+                <strong>Región:</strong> {c.region}
+              </Typography>
+            </Grid>
+          ))}
+        </Grid>
+        <Box sx={{ textAlign: "center", mt: 2 }}>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => setcompareList([])}
+          >
+            Cerrar Comparación
+          </Button>
+        </Box>
+      </Box>
+    );
+  }
 
   // Lógica de Paginación
   const count = Math.ceil(filteredCountries.length / itemsPerPage);
@@ -85,6 +153,25 @@ export const CountryTable = () => {
           </Select>
         </FormControl>
 
+        <FormControl fullWidth>
+          <InputLabel>Lenguaje</InputLabel>
+          <Select
+            value={language}
+            label="Lenguaje"
+            onChange={(e) => {
+              setLanguage(e.target.value);
+              setPage(1); // Resetear a página 1 al filtrar
+            }}
+          >
+            <MenuItem value="">Todos los Lenguajes</MenuItem>
+            {availableLanguages.map((lang) => (
+              <MenuItem key={lang} value={lang}>
+                {lang}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
         <ButtonGroup sx={{ height: "56px" }}>
           <Button
             variant={viewMode === "grid" ? "contained" : "outlined"}
@@ -100,6 +187,67 @@ export const CountryTable = () => {
           </Button>
         </ButtonGroup>
       </Stack>
+
+      {/* PANEL DE COMPARACIÓN (Solo se muestra cuando hay exactamente 2 seleccionados) */}
+      {compareList.length === 2 && (
+        <Box
+          sx={{
+            mb: 4,
+            p: 3,
+            border: "2px solid",
+            borderColor: "secondary.main",
+            borderRadius: 2,
+            bgcolor: "background.paper",
+          }}
+        >
+          <Typography
+            variant="h5"
+            sx={{ mb: 2, textAlign: "center", fontWeight: "bold" }}
+          >
+            Comparativa de Países
+          </Typography>
+
+          <Grid container spacing={2}>
+            {compareList.map((c) => (
+              <Grid item xs={6} key={c.cca3}>
+                <Card variant="outlined">
+                  <CardContent>
+                    <Typography variant="h6" color="secondary" gutterBottom>
+                      {c.name.common}
+                    </Typography>
+                    <Divider sx={{ mb: 1 }} />
+                    <Typography variant="body2">
+                      <strong>Población:</strong>{" "}
+                      {c.population.toLocaleString()}
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Área:</strong> {c.area.toLocaleString()} km²
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Región:</strong> {c.region}
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Capital:</strong> {c.capital?.[0] || "N/A"}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+
+          <Box sx={{ mt: 2, textAlign: "center" }}>
+            <Button
+              variant="contained"
+              color="error"
+              size="small"
+              onClick={() => setcompareList([])}
+            >
+              Limpiar Comparación
+            </Button>
+          </Box>
+        </Box>
+      )}
+
 
       {/* LISTADO DE PAÍSES */}
       <Grid container spacing={3}>
@@ -166,6 +314,23 @@ export const CountryTable = () => {
                     <strong>Lenguajes:</strong> {languages}
                   </Typography>
 
+                  <Button
+                    variant={
+                      compareList.find((c) => c.cca3 === country.cca3)
+                        ? "contained"
+                        : "outlined"
+                    }
+                    size="small"
+                    fullWidth
+                    onClick={() => handleCompare(country)}
+                    sx={{ mt: 1 }}
+                    color="secondary"
+                  >
+                    {compareList.find((c) => c.cca3 === country.cca3)
+                      ? "Seleccionado"
+                      : "Comparar"}
+                  </Button>
+
                   <Box sx={{ mt: 2 }}>
                     <Typography
                       variant="caption"
@@ -189,7 +354,6 @@ export const CountryTable = () => {
                             size="small"
                             variant="outlined"
                             color="primary"
-                            // --- NUEVAS PROPIEDADES ---
                             component={Link} // Hace que el Chip use la lógica de Link
                             to={`/country/${b}`} // Define la ruta dinámica del país vecino
                             clickable // Habilita el efecto visual de clic
