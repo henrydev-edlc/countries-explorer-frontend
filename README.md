@@ -20,7 +20,7 @@ Aplicación desarrollada con **React** y **TypeScript** para la exploración, b�
 
 1.  **Clonar y entrar a la carpeta:**
     ```bash
-    git clone <https://github.com/henrydev-edlc/countries-explorer-frontend.git>
+    git clone https://github.com/henrydev-edlc/countries-explorer-frontend.git
     cd countries-app
     ```
 
