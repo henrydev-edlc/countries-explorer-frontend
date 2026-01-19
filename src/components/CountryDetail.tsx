@@ -13,14 +13,14 @@ import axios from "axios";
 import type { Country } from "../interfaces/country";
 
 export const CountryDetail = () => {
-  // 1. Extraemos el 'id' de la URL (/country/:id)
+  // Extrae el 'id' de la URL (/country/:id)
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate(); // Para el botón de "Volver"
   const [country, setCountry] = useState<Country | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 2. Función para buscar el país por su código (alpha code)
+    // Función para buscar el país por su código-alpha
     const fetchCountry = async () => {
       setLoading(true);
       try {
@@ -36,7 +36,7 @@ export const CountryDetail = () => {
     };
 
     fetchCountry();
-  }, [id]); // Se vuelve a ejecutar si el ID cambia (si saltas de un vecino a otro)
+  }, [id]); // Se vuelve a ejecutar si el ID cambia (cuando seleccionas otro vecino)
 
   if (loading)
     return (

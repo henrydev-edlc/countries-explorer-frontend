@@ -52,15 +52,15 @@ export const CountryTable = () => {
     });
   }, [countries, search, region, language]);
 
-  // Extraer todos los lenguajes únicos de los países cargados
+  // Extraer todos los lenguajes unicos de los países cargados
   const availableLanguages = useMemo(() => {
     const allLangs = countries.flatMap((c) =>
       c.languages ? Object.values(c.languages) : [],
     );
-    return [...new Set(allLangs)].sort(); // Quita duplicados y ordena alfabéticamente
+    return [...new Set(allLangs)].sort(); // Quita duplicados y ordena alfabeticamente
   }, [countries]);
 
-  // Funcion para añadir/quitar de la comparación
+  // Funcion para añadir/quitar de la comparacion
   const handleCompare = (country: Country) => {
     if (compareList.find((c) => c.cca3 === country.cca3)) {
       setcompareList(compareList.filter((c) => c.cca3 !== country.cca3));
@@ -74,7 +74,7 @@ export const CountryTable = () => {
   };
 
   {
-    /* SECCIÓN DE COMPARACIÓN (Solo aparece si hay 2 seleccionados) */
+    /* SECCION DE COMPARACION (Solo aparece si hay 2 seleccionados) */
   }
   {
     compareList.length === 2 && (
@@ -113,7 +113,7 @@ export const CountryTable = () => {
     );
   }
 
-  // Lógica de Paginación
+  // Logica de Paginacion
   const count = Math.ceil(filteredCountries.length / itemsPerPage);
   const pagedCountries = filteredCountries.slice(
     (page - 1) * itemsPerPage,
@@ -188,7 +188,7 @@ export const CountryTable = () => {
         </ButtonGroup>
       </Stack>
 
-      {/* PANEL DE COMPARACIÓN (Solo se muestra cuando hay exactamente 2 seleccionados) */}
+      {/* PANEL DE COMPARACIÓN (Solo se muestra cuando hay exactamente 2  paises seleccionados) */}
       {compareList.length === 2 && (
         <Box
           sx={{
