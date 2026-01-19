@@ -38,7 +38,7 @@ Aplicación desarrollada con **React** y **TypeScript** para la exploración, b�
 
 ### Imagen en DockerHub
 La imagen oficial de esta aplicación puede encontrarse en:
-> **URL:** [https://hub.docker.com/r/TU_USUARIO/countries-frontend](https://hub.docker.com/r/henrydev2026/countries-frontend)
+> **URL:** [https://hub.docker.com/r/hnerydev2026/countries-frontend](https://hub.docker.com/r/henrydev2026/countries-frontend)
 
 ### Ejecutar con Docker Compose
 Este proyecto incluye una configuración de orquestación para levantar el Frontend y el Backend simultáneamente:
