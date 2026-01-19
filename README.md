@@ -1,73 +1,47 @@
-# React + TypeScript + Vite
+# 🌍 Countries Explorer - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación desarrollada con **React** y **TypeScript** para la exploración, búsqueda y comparación de países. Este proyecto fue diseñado con un enfoque en la experiencia de usuario (UX) y siguiendo estándares de la industria.
 
-Currently, two official plugins are available:
+## 🚀 Características
+- **Filtrado Avanzado**: Búsqueda por nombre, región y lenguajes dinámicos.
+- **Comparativa de Países**: Panel interactivo para comparar datos demográficos de dos países a la vez.
+- **Modo Oscuro/Claro**: Alternador de tema profesional con iconos dinámicos y paleta de colores personalizada (`#0a1929`).
+- **Navegación Fluida**: Navegación entre países vecinos manteniendo el estado de filtros y paginación mediante historial.
+- **Diseño Responsivo**: Contenedores centrados y cuadrículas adaptables con Material UI.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🛠️ Tecnologías
+- **Framework**: React 18 (Vite) + TypeScript.
+- **UI & Estilos**: Material UI (MUI).
+- **Gestión de Rutas**: React Router DOM.
+- **API**: Axios (RestCountries API).
+- **Despliegue**: Docker & Docker Compose.
 
-## React Compiler
+## 📦 Instalación y Uso Local
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1.  **Clonar y entrar a la carpeta:**
+    ```bash
+    git clone <URL_DE_TU_REPOSITORIO>
+    cd countries-app
+    ```
 
-## Expanding the ESLint configuration
+2.  **Instalar dependencias:**
+    ```bash
+    npm install
+    ```
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+3.  **Correr en desarrollo:**
+    ```bash
+    npm run dev
+    ```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🐳 Docker y Despliegue
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Imagen en DockerHub
+La imagen oficial de esta aplicación puede encontrarse en:
+> **URL:** [https://hub.docker.com/r/TU_USUARIO/countries-frontend](https://hub.docker.com/r/henrydev2026/countries-frontend)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Ejecutar con Docker Compose
+Este proyecto incluye una configuración de orquestación para levantar el Frontend y el Backend simultáneamente:
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+```bash
+docker-compose up --build
